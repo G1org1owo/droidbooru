@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mutex/mutex.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../model/base/booru.dart';
 import '../model/base/post.dart';
@@ -14,12 +16,35 @@ class BooruContainer extends StatefulWidget {
 
 class _BooruState extends State<BooruContainer> {
   List<Post> _posts = [];
+  int _page = 1;
+  final ItemPositionsListener _listener = ItemPositionsListener.create();
+  final Mutex _mutex = Mutex();
 
   @override
   void initState() {
     super.initState();
-    widget._booru.listPosts(0, 0, [])
-        .then((posts) => updatePosts(posts));
+    loadNewPosts();
+
+    _listener.itemPositions.addListener(() async {
+      final positions = _listener.itemPositions.value;
+      final lastVisibleItem = positions.reduce((last, position) =>
+        last.index > position.index? last : position
+      );
+
+      // Must avoid double firing while new posts are already loading, as it
+      // would lead to loading twice as many posts.
+      _mutex.protect(() async {
+        if(lastVisibleItem.index > _posts.length - 2) {
+          await loadNewPosts();
+        }
+      });
+    });
+  }
+
+  Future<void> loadNewPosts() async {
+    List<Post> newPosts = await widget._booru.listPosts(100, _page, []);
+    updatePosts(_posts + newPosts);
+    _page += 1;
   }
 
   void updatePosts(List<Post> posts) => setState(() => _posts = posts);
@@ -28,9 +53,16 @@ class _BooruState extends State<BooruContainer> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-      child: ListView(
+      child: ScrollablePositionedList.builder(
         scrollDirection: Axis.horizontal,
-        children: _posts.map((post) => PostContainer(post)).toList(),
+        itemPositionsListener: _listener,
+        itemCount: _posts.length,
+        itemBuilder: (BuildContext context, int index) {
+          return PostContainer(_posts[index], {
+            'index': index + 1,
+            'totalPosts': _posts.length
+          });
+        },
       ),
     );
   }

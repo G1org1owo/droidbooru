@@ -5,7 +5,8 @@ import 'post_detail.dart';
 
 class PostContainer extends StatelessWidget {
   final Post _post;
-  const PostContainer(this._post, {super.key});
+  final Map<String, dynamic> _ctx;
+  const PostContainer(this._post, this._ctx, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class PostContainer extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PostDetail(_post)),
+            MaterialPageRoute(builder: (context) => PostDetail(_post, _ctx)),
           );
         },
         child: Padding(

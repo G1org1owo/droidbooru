@@ -17,8 +17,8 @@ class Moebooru implements Booru {
     Map<String, dynamic> queryParams = {
       "tags": Uri.encodeQueryComponent(tags.join(" "))
     };
-    if(limit>0) queryParams['limit'] = limit;
-    if(page>0) queryParams['page'] = page;
+    if(limit>0) queryParams['limit'] = limit.toString();
+    if(page>0) queryParams['page'] = page.toString();
 
     final uriBuilder = isHttps() ? Uri.https : Uri.http;
 
