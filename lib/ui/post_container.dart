@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import '../model/base/post.dart';
 import 'post_detail.dart';
@@ -31,11 +32,14 @@ class PostContainer extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: Image.network(
-          _post.previewUrl,
+        child: FadeInImage.memoryNetwork(
+          fadeInDuration: const Duration(milliseconds: 100),
+          fadeOutDuration: const Duration(milliseconds: 100),
+          placeholder: kTransparentImage,
+          image: _post.previewUrl,
           fit: BoxFit.fill,
         ),
-      )
+      ),
     );
   }
 }

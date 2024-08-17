@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 
 import '../model/base/post.dart';
 
@@ -19,14 +20,14 @@ class PostDetail extends StatefulWidget {
 
 class _PostDetailState extends State<PostDetail> {
   late int _currentIndex;
-  late PageController _controller;
+  late PreloadPageController _controller;
 
   @override
   void initState() {
     super.initState();
 
     _currentIndex = widget._initialIndex;
-    _controller = PageController(initialPage: _currentIndex);
+    _controller = PreloadPageController(initialPage: _currentIndex);
   }
 
   void updateIndex(int index) {
@@ -54,15 +55,22 @@ class _PostDetailState extends State<PostDetail> {
         ),
         body: GestureDetector(
           child: Center(
-            child: PageView.builder(
+            child: PreloadPageView.builder(
               itemBuilder: (context, index) {
-                return Image.network(_posts[index].sampleUrl);
+                return FadeInImage(
+                  placeholder: NetworkImage(_posts[index].previewUrl),
+                  image: NetworkImage(_posts[index].sampleUrl),
+                  fit: BoxFit.contain,
+                  fadeOutDuration: const Duration(milliseconds: 5),
+                  fadeInDuration: const Duration(milliseconds: 5),
+                );
               },
               itemCount: _posts.length,
               controller: _controller,
               onPageChanged: (int page) {
                 updateIndex(page);
               },
+              preloadPagesCount: 2,
             ),
           ),
         ),
