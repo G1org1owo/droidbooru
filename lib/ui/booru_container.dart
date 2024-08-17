@@ -17,7 +17,9 @@ class BooruContainer extends StatefulWidget {
 class _BooruState extends State<BooruContainer> {
   List<Post> _posts = [];
   int _page = 1;
+
   final ItemPositionsListener _listener = ItemPositionsListener.create();
+  final ItemScrollController _controller = ItemScrollController();
   final Mutex _mutex = Mutex();
 
   @override
@@ -55,15 +57,19 @@ class _BooruState extends State<BooruContainer> {
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
       child: ScrollablePositionedList.builder(
         scrollDirection: Axis.horizontal,
+        itemScrollController: _controller,
         itemPositionsListener: _listener,
         itemCount: _posts.length,
-        itemBuilder: (BuildContext context, int index) {
-          return PostContainer(_posts[index], {
-            'index': index + 1,
-            'totalPosts': _posts.length
-          });
-        },
+        itemBuilder: postBuilder,
       ),
+    );
+  }
+
+  Widget postBuilder(BuildContext context, int index) {
+    return PostContainer(
+        posts: _posts,
+        index: index,
+        onExit: (index) => _controller.jumpTo(index: index),
     );
   }
 }
