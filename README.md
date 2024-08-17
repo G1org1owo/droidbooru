@@ -1,6 +1,6 @@
 # droidbooru
 
-An Android Booru viewer
+An open source mobile browser for most image boards, realized in Flutter
 
 ## Getting Started
 
