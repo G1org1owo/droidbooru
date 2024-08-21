@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<Booru> _boorus = [];
-  final BooruContext _ctx = BooruContext();
+  final BooruContext _ctx = BooruContext.getContext();
 
   void loadBoorus() async {
     List<Booru> boorus = await _ctx.readAll();
