@@ -8,10 +8,13 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class Moebooru extends Booru {
+  final int? _id;
   final Uri _url;
   static const String _type = "moebooru";
 
-  Moebooru.fromUrl(String url) : _url = Uri.parse(url);
+  Moebooru.fromUrl(String url, {int? id}) :
+    _url = Uri.parse(url),
+    _id = id;
 
   @override
   Future<List<Post>> listPosts(int limit, int page, List<String> tags) async {
@@ -31,6 +34,9 @@ class Moebooru extends Booru {
   }
 
   @override
+  int? get id => _id;
+
+  @override
   Uri get url => _url;
 
   @override
@@ -43,6 +49,6 @@ class Moebooru extends Booru {
 
   @override
   String toString() {
-    return 'Moebooru{_url: $_url}';
+    return 'Moebooru{id: $id, _url: $_url}';
   }
 }

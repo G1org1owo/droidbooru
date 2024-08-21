@@ -37,7 +37,8 @@ class BooruContext {
     return records.map((record) =>
       BooruDeserializer.deserialize(
           record['type'] as String,
-          record['url'] as String
+          record['url'] as String,
+          id: record.key as int,
       )!
     ).toList();
   }
@@ -52,14 +53,17 @@ class BooruContext {
 
     return record == null? null : BooruDeserializer.deserialize(
         record['type'] as String,
-        record['url'] as String
+        record['url'] as String,
+        id: record.key as int,
     )!;
   }
 
-  Future<void> add(Booru booru) async {
+  Future<Booru> add(Booru booru) async {
     if(_init != null) await _init;
 
-    await _booruStore.add(_db, booru.toMap());
+    int id = (await _booruStore.add(_db, booru.toMap())) as int;
+
+    return BooruDeserializer.deserialize(booru.type, booru.url.origin, id: id)!;
   }
 
   Future<void> clear() async {

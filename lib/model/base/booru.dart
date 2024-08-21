@@ -1,6 +1,7 @@
 import 'post.dart';
 
 abstract class Booru {
+  int? get id;
   Uri get url;
   String get type;
   bool isHttps();
