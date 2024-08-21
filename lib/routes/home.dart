@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide NavigationDrawer;
 
 import '../model/base/booru.dart';
 import '../model/booru_context.dart';
 import '../ui/booru_list.dart';
-import '../ui/droidbooru_drawer.dart';
+import '../ui/navigation_drawer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
         title: Text(widget.title),
       ),
       body: BooruList(_boorus),
-      drawer: const DroidbooruDrawer(),
+      drawer: const NavigationDrawer(),
     );
   }
 }

@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide NavigationDrawer;
 
 import '../model/base/booru.dart';
 import '../model/booru_context.dart';
-import '../ui/droidbooru_drawer.dart';
+import '../ui/navigation_drawer.dart';
 import '../ui/server_detail.dart';
 
 class ServersPage extends StatefulWidget {
@@ -74,7 +74,7 @@ class _ServersPageState extends State<ServersPage> {
         },
         itemCount: _servers.length,
       ),
-      drawer: const DroidbooruDrawer(),
+      drawer: const NavigationDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _addServer(context),
         child: const Icon(Icons.add),
