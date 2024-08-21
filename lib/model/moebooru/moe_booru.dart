@@ -7,8 +7,9 @@ import 'moe_post.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class Moebooru implements Booru {
+class Moebooru extends Booru {
   final Uri _url;
+  static const String _type = "moebooru";
 
   Moebooru.fromUrl(String url) : _url = Uri.parse(url);
 
@@ -30,15 +31,10 @@ class Moebooru implements Booru {
   }
 
   @override
-  Map<String, dynamic> toMap() {
-    return {
-      'url': _url.toString(),
-      'type': 'moebooru',
-    };
-  }
+  Uri get url => _url;
 
   @override
-  Uri get url => _url;
+  String get type => _type;
 
   @override
   bool isHttps() {
