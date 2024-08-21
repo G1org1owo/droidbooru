@@ -145,24 +145,37 @@ class _PostInteractiveImageState extends State<PostInteractiveImage> {
     return Size(renderedWidth, renderedHeight);
   }
   Matrix4 _recalculateOffset(double scale, Matrix4 matrix, Size screenSize, Size renderedSize) {
-    Matrix4 newMatrix = matrix.clone();
-
     // If the previous calculations end up not being centered, fix the offset
     // to avoid zooming towards the black bars (this is the only reason
     // I had to rewrite InteractiveViewer from scratch)
-    if (renderedSize.width/2 * scale + newMatrix.row0.w <= renderedSize.width/2) {
-      newMatrix.setEntry(0, 3, (renderedSize.width - renderedSize.width * scale) / 2);
-    } else if (-renderedSize.width/2 * scale + newMatrix.row0.w >= -renderedSize.width/2) {
-      newMatrix.setEntry(0, 3, (renderedSize.width * scale - renderedSize.width) / 2);
-    } else if (renderedSize.width/2 * scale + newMatrix.row0.w <= screenSize.width/2) {
+
+    Size imageSize = renderedSize * scale;
+
+    Matrix4 newMatrix = matrix.clone();
+
+    double highestX = imageSize.width/2 + newMatrix.row0.w;
+    double lowestX = -imageSize.width/2 + newMatrix.row0.w;
+
+    if(imageSize.width > screenSize.width) {
+      if (highestX < screenSize.width/2) {
+        newMatrix.setEntry(0, 3, (screenSize.width - imageSize.width) / 2);
+      } else if (lowestX > -screenSize.width/2) {
+        newMatrix.setEntry(0, 3, (imageSize.width - screenSize.width) / 2);
+      }
+    } else {
       newMatrix.setEntry(0, 3, 0.0);
     }
 
-    if (renderedSize.height/2 * scale + newMatrix.row1.w <= renderedSize.height/2) {
-      newMatrix.setEntry(1, 3, (renderedSize.height - renderedSize.height * scale) / 2);
-    } else if (-renderedSize.height/2 * scale + newMatrix.row1.w >= -renderedSize.height/2) {
-      newMatrix.setEntry(1, 3, (renderedSize.height * scale - renderedSize.height) / 2);
-    } else if (renderedSize.height/2 * scale + newMatrix.row1.w <= screenSize.height/2) {
+    double highestY = imageSize.height/2 + newMatrix.row1.w;
+    double lowestY = -imageSize.height/2 + newMatrix.row1.w;
+
+    if(imageSize.height > screenSize.height) {
+      if(highestY < screenSize.height/2) {
+        newMatrix.setEntry(1, 3, (screenSize.height - imageSize.height) / 2);
+      } else if(lowestY > -screenSize.height/2) {
+        newMatrix.setEntry(1, 3, (imageSize.height - screenSize.height) / 2);
+      }
+    } else {
       newMatrix.setEntry(1, 3, 0.0);
     }
 
