@@ -43,7 +43,7 @@ class BooruContext {
     ).toList();
   }
 
-  Future<Booru?> read(String url) async {
+  Future<Booru?> find(String url) async {
     if(_init != null) await _init;
 
     final record = await _booruStore.findFirst(
@@ -66,13 +66,32 @@ class BooruContext {
     return BooruDeserializer.deserialize(booru.type, booru.url.origin, id: id)!;
   }
 
+  Future<void> update(Booru booru) async {
+    if(_init != null) await _init;
+
+    if(booru.id == null) throw StateError("Booru.id is Null!");
+
+    await _booruStore.record(booru.id).update(_db, booru.toMap());
+  }
+
+  Future<Booru> put(Booru booru) async {
+    if(_init != null) await _init;
+
+    if(booru.id != null) {
+      await update(booru);
+      return booru;
+    } else {
+      return await add(booru);
+    }
+  }
+
   Future<void> clear() async {
     if(_init != null) await _init;
 
     await _booruStore.delete(_db);
   }
 
-  Future<void> remove(String url) async {
+  Future<void> findAndRemove(String url) async {
     if(_init != null) await _init;
 
     final record = await _booruStore.findFirst(
@@ -81,5 +100,13 @@ class BooruContext {
     );
 
     await _booruStore.record(record?.key).delete(_db);
+  }
+
+  Future<void> delete(Booru booru) async {
+    if(_init != null) await _init;
+
+    if(booru.id == null) throw StateError("Booru.id is Null!");
+
+    await _booruStore.record(booru.id!).delete(_db);
   }
 }

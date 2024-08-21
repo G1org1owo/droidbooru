@@ -85,7 +85,7 @@ class ServerDetail extends StatelessWidget {
       String key = _booruTypeController.text;
       String url = _urlController.text;
 
-      if((await BooruContext.getContext().read(url)) != null &&
+      if((await BooruContext.getContext().find(url)) != null &&
           context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

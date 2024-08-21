@@ -59,7 +59,7 @@ class _ServersPageState extends State<ServersPage> {
                   setState(() {
                     server = _servers.removeAt(index);
                   });
-                  _ctx.remove(server.url.origin);
+                  _ctx.delete(server);
                 },
               ),
             ],
