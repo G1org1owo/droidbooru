@@ -67,7 +67,12 @@ class _PostInteractiveImageState extends State<PostInteractiveImage> {
       widget._onScaleStart?.call(details);
   }
   void _onScaleUpdate(ScaleUpdateDetails details) {
-      if(details.pointerCount != 2) return;
+      if(details.pointerCount == 1) {
+        _applyPan(details.focalPointDelta);
+        return;
+      }
+
+      if(details.pointerCount > 2) return;
 
       /* TODO: if widget._maxScale is 0, allow infinite zooming or up to 1.5x
                the screen size relative to the smallest dimension of the image
@@ -80,11 +85,21 @@ class _PostInteractiveImageState extends State<PostInteractiveImage> {
       }
 
       _applyScale(newScale, _origin!);
-      widget._onScaleUpdate?.call(details);
+
+      widget._onScaleUpdate?.call(ScaleUpdateDetails(
+        focalPoint: details.focalPoint,
+        localFocalPoint: details.localFocalPoint,
+        scale: newScale,
+        rotation: details.rotation,
+        pointerCount: details.pointerCount,
+        focalPointDelta: details.focalPoint,
+        sourceTimeStamp: details.sourceTimeStamp
+      ));
   }
   void _onScaleEnd(ScaleEndDetails details) {
       _previousScale = 0;
       if(details.pointerCount == 0) {
+        // TODO: add velocity-based panning when releasing the drag
         _origin = null;
       }
       widget._onScaleEnd?.call(details);
@@ -185,6 +200,26 @@ class _PostInteractiveImageState extends State<PostInteractiveImage> {
       ));
 
     newMatrix = _recalculateOffset(newScale, newMatrix, screenSize, renderedSize);
+
+    setState(() {
+      _matrix = newMatrix;
+    });
+  }
+  void _applyPan(Offset delta) {
+    Matrix4 newMatrix = _matrix.clone();
+
+    newMatrix.setEntry(0, 3, _matrix.row0.w + delta.dx);
+    newMatrix.setEntry(1, 3, _matrix.row1.w + delta.dy);
+
+    Size screenSize = MediaQuery.sizeOf(context);
+    Size renderedSize = _getRenderedSize(
+        screenSize,
+        Size(post.width.toDouble(), post.height.toDouble())
+    );
+
+    double scale = _matrix.getMaxScaleOnAxis();
+
+    newMatrix = _recalculateOffset(scale, newMatrix, screenSize, renderedSize);
 
     setState(() {
       _matrix = newMatrix;
