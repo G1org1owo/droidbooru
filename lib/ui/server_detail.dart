@@ -5,11 +5,14 @@ import '../model/base/booru_deserializer.dart';
 import '../model/booru_context.dart';
 
 class ServerDetail extends StatelessWidget {
-  ServerDetail({super.key});
+  final Booru? _server;
+  ServerDetail({Booru? server, super.key}) :
+    _server = server,
+    _urlController = TextEditingController(text: server?.url.origin);
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _booruTypeController = TextEditingController();
-  final TextEditingController _urlController = TextEditingController();
+  final TextEditingController _urlController;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,7 @@ class ServerDetail extends StatelessWidget {
                     label: string,
                   );
                 }).toList(),
-                initialSelection: BooruDeserializer.keys.first,
+                initialSelection: _server?.type ?? BooruDeserializer.keys.first,
                 expandedInsets: const EdgeInsets.symmetric(vertical: 10.0),
                 label: const Text("Type:"),
                 controller: _booruTypeController,
@@ -85,7 +88,7 @@ class ServerDetail extends StatelessWidget {
       String key = _booruTypeController.text;
       String url = _urlController.text;
 
-      if((await BooruContext.getContext().find(url)) != null &&
+      if((_server == null || _server.url.origin != url) && (await BooruContext.getContext().find(url)) != null &&
           context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -95,8 +98,8 @@ class ServerDetail extends StatelessWidget {
         return;
       }
 
-      Booru newServer = BooruDeserializer.deserialize(key, url, id: null)!;
-      newServer = await BooruContext.getContext().add(newServer);
+      Booru newServer = BooruDeserializer.deserialize(key, url, id: _server?.id)!;
+      newServer = await BooruContext.getContext().put(newServer);
       if(context.mounted) {
         Navigator.pop(context, newServer);
       }

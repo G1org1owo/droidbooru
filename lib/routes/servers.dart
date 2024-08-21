@@ -50,7 +50,7 @@ class _ServersPageState extends State<ServersPage> {
             menuChildren: [
               MenuItemButton(
                 child: const Text('Edit'),
-                onPressed: () {},
+                onPressed: () => _updateServer(context, index),
               ),
               MenuItemButton(
                 child: const Text('Remove'),
@@ -76,20 +76,35 @@ class _ServersPageState extends State<ServersPage> {
       ),
       drawer: const DroidbooruDrawer(),
       floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            Booru? newServer = await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => ServerDetail())
-            );
-
-            if(newServer != null) {
-              setState(() {
-                _servers.add(newServer);
-              });
-            }
-          },
+        onPressed: () => _addServer(context),
         child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+  }
+
+  void _addServer(BuildContext context) async {
+    Booru? newServer = await Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => ServerDetail())
+    );
+
+    if(newServer != null) {
+      setState(() {
+        _servers.add(newServer);
+      });
+    }
+  }
+  void _updateServer(BuildContext context, index) async {
+    Booru? updatedServer = await Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => ServerDetail(
+            server: _servers[index]
+        ))
+    );
+
+    if(updatedServer != null) {
+      setState(() {
+        _servers[index] = updatedServer;
+      });
+    }
   }
 }
