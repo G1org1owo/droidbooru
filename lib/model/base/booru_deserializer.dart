@@ -11,4 +11,6 @@ class BooruDeserializer {
   static Booru? deserialize(String key, String url) {
     return _deserializers[key]?._deserializer(url);
   }
+
+  static List<String> get keys => _deserializers.keys.toList();
 }

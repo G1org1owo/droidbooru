@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'model/base/booru_deserializer.dart';
 import 'model/moebooru/moe_booru.dart';
 import 'routes/home.dart';
+import 'routes/servers.dart';
 
 void main() {
   // This sucks and it defeates the whole purpose of creating an interface,
@@ -29,6 +30,7 @@ class App extends StatelessWidget {
       initialRoute: 'home',
       routes: {
         'home': (context) => const HomePage(title: 'Droidbooru'),
+        'servers': (context) => const ServersPage(),
       },
     );
   }
