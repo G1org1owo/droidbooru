@@ -1,23 +1,19 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
-import 'model/base/booru.dart';
 import 'model/base/booru_deserializer.dart';
-import 'model/booru_context.dart';
 import 'model/moebooru/moe_booru.dart';
-import 'ui/booru_list.dart';
+import 'routes/home.dart';
 
 void main() {
   // This sucks and it defeates the whole purpose of creating an interface,
   // but this framework sucks and won't let me use reflection nor annotations
   BooruDeserializer("moebooru", Moebooru.fromUrl);
 
-  runApp(const MyApp());
+  runApp(const App());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,48 +26,10 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Droidbooru'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  final List<Booru> _boorus = [];
-  final BooruContext _ctx = BooruContext();
-
-  void loadBoorus() async {
-    List<Booru> boorus = await _ctx.readAll();
-    setState(() {
-      _boorus.clear();
-      _boorus.addAll(boorus);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    loadBoorus();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: BooruList(_boorus),
-      floatingActionButton: FloatingActionButton(
-          onPressed: loadBoorus,
-      ),
+      initialRoute: 'home',
+      routes: {
+        'home': (context) => const HomePage(title: 'Droidbooru'),
+      },
     );
   }
 }
