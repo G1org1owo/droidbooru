@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import '../base/booru.dart';
 import '../base/post.dart';
 import 'moe_post.dart';
@@ -30,7 +28,7 @@ class Moebooru extends Booru {
     final response = await http.get(url);
 
     List<dynamic> posts = jsonDecode(response.body);
-    return posts.map((post) => MoebooruPost.fromMap(post)).toList();
+    return posts.map((post) => MoebooruPost.fromMap(post, this)).toList();
   }
 
   @override

@@ -1,8 +1,11 @@
+import 'booru.dart';
 import 'tag.dart';
 
 abstract class Post {
-  int get parentId;
-  set parentId(int value);
+  Booru get booru;
+
+  int? get parentId;
+  set parentId(int? value);
 
   int get height;
   set height(int value);
@@ -42,4 +45,9 @@ abstract class Post {
 
   String get rating;
   set rating(String value);
+
+  bool get hasChildren;
+  set hasChildren(bool value);
+
+  String get url;
 }

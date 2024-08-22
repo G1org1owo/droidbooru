@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import '../base/booru.dart';
 import '../base/tag.dart';
 import '../base/post.dart';
+import 'moe_booru.dart';
 import 'moe_tag.dart';
 
 class MoebooruPost implements Post {
+  final Moebooru _booru;
   int _id;
   String _author;
   String _source;
@@ -16,36 +19,23 @@ class MoebooruPost implements Post {
   String _sampleUrl;
   int _width;
   int _height;
-  int _parentId;
+  int? _parentId;
   String _rating;
+  bool _hasChildren;
+  MoebooruPost._(this._id, this._author, this._source, this._score, this._md5,
+      this._fileExtension, this._contentUrl, this._previewUrl,
+      this._sampleUrl, this._width, this._height, this._parentId, this._rating,
+      this._hasChildren, this._tags, this._booru);
+
   List<Tag> _tags;
 
-  MoebooruPost._(int id, String author, String source, int score, String md5,
-      String? fileExtension, String contentUrl, String previewUrl,
-      String sampleUrl, int width, int height, int parentId, String rating,
-      List<Tag> tags) :
-    _id = id,
-    _author = author,
-    _source = source,
-    _score = score,
-    _md5 = md5,
-    _fileExtension = fileExtension,
-    _contentUrl = contentUrl,
-    _previewUrl = previewUrl,
-    _sampleUrl = sampleUrl,
-    _width = width,
-    _height = height,
-    _parentId = parentId,
-    _rating = rating,
-    _tags = tags;
-
-  factory MoebooruPost.fromJson(String json) {
+  factory MoebooruPost.fromJson(String json, Moebooru booru) {
     final jsonData = jsonDecode(json);
 
-    return MoebooruPost.fromMap(jsonData);
+    return MoebooruPost.fromMap(jsonData, booru);
   }
 
-  factory MoebooruPost.fromMap(Map<String, dynamic> map) {
+  factory MoebooruPost.fromMap(Map<String, dynamic> map, Moebooru booru) {
     return MoebooruPost._(
       map['id'],
       map['author'],
@@ -58,9 +48,11 @@ class MoebooruPost implements Post {
       map['sample_url'],
       map['width'],
       map['height'],
-      map['parent_id'] ?? -1,
+      map['parent_id'],
       map['rating'],
+      map['has_children'],
       (map['tags'] as String).split(' ').map((tag) => MoebooruTag(tag)).toList(),
+      booru,
     );
   }
 
@@ -74,10 +66,10 @@ class MoebooruPost implements Post {
   }
 
   @override
-  int get parentId => _parentId;
+  int? get parentId => _parentId;
 
   @override
-  set parentId(int value) {
+  set parentId(int? value) {
     _parentId = value;
   }
 
@@ -184,4 +176,18 @@ class MoebooruPost implements Post {
   set rating(String value) {
     _rating = value;
   }
+
+  @override
+  bool get hasChildren => _hasChildren;
+
+  @override
+  set hasChildren(bool value) {
+    _hasChildren = value;
+  }
+
+  @override
+  Booru get booru => _booru;
+
+  @override
+  String get url => "${_booru.url.origin}/post/show/$_id";
 }
