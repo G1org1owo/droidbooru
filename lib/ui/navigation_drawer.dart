@@ -28,7 +28,7 @@ class NavigationDrawer extends StatelessWidget {
   }
 
   _navigate(BuildContext context, String route) {
-    if(ModalRoute.of(context)!.settings.name! == route) return;
+    if(ModalRoute.of(context)!.settings.name == route) return;
 
     Navigator.restorablePushReplacementNamed(context, route);
   }
