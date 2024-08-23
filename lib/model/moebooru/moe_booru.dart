@@ -1,3 +1,5 @@
+import 'package:http/retry.dart';
+
 import '../base/booru.dart';
 import '../base/post.dart';
 import 'moe_post.dart';
@@ -9,6 +11,8 @@ class Moebooru extends Booru {
   final int? _id;
   final Uri _url;
   static const String _type = "moebooru";
+
+  final _client = RetryClient(http.Client());
 
   Moebooru.fromUrl(String url, {int? id}) :
     _url = Uri.parse(url),
@@ -25,7 +29,7 @@ class Moebooru extends Booru {
     final uriBuilder = isHttps() ? Uri.https : Uri.http;
 
     final Uri url = uriBuilder(_url.authority, 'post.json', queryParams);
-    final response = await http.get(url);
+    final response = await _client.get(url);
 
     List<dynamic> posts = jsonDecode(response.body);
     return posts.map((post) => MoebooruPost.fromMap(post, this)).toList();
