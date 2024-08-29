@@ -1,10 +1,10 @@
 import 'dart:convert';
+import 'dart:isolate';
 
 import '../base/booru.dart';
 import '../base/tag.dart';
 import '../base/post.dart';
 import 'moe_booru.dart';
-import 'moe_tag.dart';
 
 class MoebooruPost implements Post {
   final Moebooru _booru;
@@ -22,12 +22,13 @@ class MoebooruPost implements Post {
   int? _parentId;
   String _rating;
   bool _hasChildren;
+
+  List<Tag> _tags;
+
   MoebooruPost._(this._id, this._author, this._source, this._score, this._md5,
       this._fileExtension, this._contentUrl, this._previewUrl,
       this._sampleUrl, this._width, this._height, this._parentId, this._rating,
       this._hasChildren, this._tags, this._booru);
-
-  List<Tag> _tags;
 
   factory MoebooruPost.fromJson(String json, Moebooru booru) {
     final jsonData = jsonDecode(json);
@@ -36,7 +37,7 @@ class MoebooruPost implements Post {
   }
 
   factory MoebooruPost.fromMap(Map<String, dynamic> map, Moebooru booru) {
-    return MoebooruPost._(
+    MoebooruPost post = MoebooruPost._(
       map['id'],
       map['author'],
       map['source'],
@@ -51,9 +52,15 @@ class MoebooruPost implements Post {
       map['parent_id'],
       map['rating'],
       map['has_children'],
-      (map['tags'] as String).split(' ').map((tag) => MoebooruTag(tag)).toList(),
+      [],
       booru,
     );
+
+    Isolate.run(() => booru.getTags(map['id'])).then(
+            (tags) => post._tags = tags
+    );
+
+    return post;
   }
 
   @override
