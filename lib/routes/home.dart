@@ -4,6 +4,8 @@ import '../model/base/booru.dart';
 import '../model/booru_context.dart';
 import '../ui/booru_list.dart';
 import '../ui/navigation_drawer.dart';
+import '../ui/search_bottom_sheet.dart';
+import '../ui/weighted_icon.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -14,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<String> _tags = [];
   final List<Booru> _boorus = [];
   final BooruContext _ctx = BooruContext.getContext();
 
@@ -35,10 +38,31 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.transparent,
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              List<String>? newTags = await showModalBottomSheet(
+                  context: context,
+                  builder: (context) => SearchBottomSheet(tags: _tags),
+              );
+
+              if(newTags == null) return;
+
+              setState(() {
+                _tags = newTags;
+              });
+            },
+            icon: const WeightedIcon(
+              Icons.search_rounded,
+              iconSize: 30,
+              iconWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
-      body: BooruList(_boorus),
+      body: BooruList(_boorus, tags: _tags),
       drawer: const NavigationDrawer(),
     );
   }
