@@ -62,9 +62,14 @@ class Moebooru extends Booru {
     final client = RetryClient(http.Client(), retries: 5);
 
     Uri url = _uriBuilder(_url.authority, "post/show/$postId");
-    final response = await client.get(url);
-    final document = html.parse(response.body);
+    http.Response response = await client.get(url);
 
+    while(response.statusCode != 200) {
+      await Future.delayed(const Duration(seconds: 1));
+      response = await client.get(url);
+    }
+
+    final document = html.parse(response.body);
     List<Tag> tags = document.querySelectorAll("#tag-sidebar > li")
         .map(_parseTag)
         .nonNulls
