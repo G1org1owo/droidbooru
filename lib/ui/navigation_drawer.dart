@@ -11,14 +11,12 @@ class NavigationDrawer extends StatelessWidget {
           ListTile(
             title: const Text("Home"),
             onTap: () {
-              Navigator.pop(context);
               _navigate(context, 'home');
             },
           ),
           ListTile(
             title: const Text("Servers"),
             onTap: () {
-              Navigator.pop(context);
               _navigate(context, 'servers');
             },
           ),
@@ -28,8 +26,20 @@ class NavigationDrawer extends StatelessWidget {
   }
 
   _navigate(BuildContext context, String route) {
+    Navigator.pop(context); // Close drawer
+
     if(ModalRoute.of(context)!.settings.name == route) return;
 
-    Navigator.restorablePushReplacementNamed(context, route);
+    if(route == 'home') {
+      Navigator.popUntil(context, (route) => route.isFirst);
+      return;
+    }
+
+    if(ModalRoute.of(context)!.settings.name == 'home') {
+      Navigator.pushNamed(context, route);
+      return;
+    }
+
+    Navigator.pushReplacementNamed(context, route);
   }
 }
