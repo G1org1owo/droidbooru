@@ -8,12 +8,15 @@ class PostContainer extends StatelessWidget {
   final List<Post> _posts;
   final int _index;
   final void Function(int)? _onExit;
+  final Future<bool> Function(int)? _onIndexUpdate;
 
   const PostContainer({required List<Post> posts, int index = 0,
-    void Function(int)? onExit, super.key}) :
-        _posts = posts,
-        _index = index,
-        _onExit = onExit;
+    void Function(int)? onExit, Future<bool> Function(int)? onIndexUpdate,
+    super.key}) :
+      _posts = posts,
+      _index = index,
+      _onExit = onExit,
+      _onIndexUpdate = onIndexUpdate;
 
   Post get _post => _posts[_index];
 
@@ -24,9 +27,10 @@ class PostContainer extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => PostDetail(
-              posts: _posts,
-              index: _index,
-              onExit: _onExit,
+            posts: _posts,
+            index: _index,
+            onExit: _onExit,
+            onIndexUpdate: _onIndexUpdate,
           )),
         );
       },

@@ -10,12 +10,15 @@ class PostDetail extends StatefulWidget {
   final List<Post> _posts;
   final int _initialIndex;
   final void Function(int)? _onExit;
+  final Future<bool> Function(int)? _onIndexUpdate;
 
   const PostDetail({required List<Post> posts, int index = 0,
-    void Function(int)? onExit, super.key}) :
-        _posts = posts,
-        _initialIndex = index,
-        _onExit = onExit;
+    void Function(int)? onExit, Future<bool> Function(int)? onIndexUpdate,
+    super.key}) :
+      _posts = posts,
+      _initialIndex = index,
+      _onExit = onExit,
+      _onIndexUpdate = onIndexUpdate;
 
   @override
   State<StatefulWidget> createState() => _PostDetailState();
@@ -40,6 +43,11 @@ class _PostDetailState extends State<PostDetail> {
   }
 
   void updateIndex(int index) {
+    if(widget._onIndexUpdate != null) {
+      widget._onIndexUpdate!(index).then(
+        (shouldUpdateState) => shouldUpdateState? setState(() {}) : null
+      );
+    }
     setState(() {
       _currentIndex = index;
     });
@@ -55,7 +63,7 @@ class _PostDetailState extends State<PostDetail> {
         if(didPop) return;
 
         // Update outer context based on new scroll index
-        widget._onExit!(_currentIndex);
+        if(widget._onExit != null) widget._onExit!(_currentIndex);
         Navigator.pop(context);
       },
       child: Scaffold(

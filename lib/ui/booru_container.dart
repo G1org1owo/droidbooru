@@ -19,7 +19,7 @@ class BooruContainer extends StatefulWidget {
 }
 
 class _BooruState extends State<BooruContainer> {
-  List<Post> _posts = [];
+  final List<Post> _posts = [];
   int _page = 1;
 
   final ItemPositionsListener _listener = ItemPositionsListener.create();
@@ -37,14 +37,31 @@ class _BooruState extends State<BooruContainer> {
         last.index > position.index? last : position
       );
 
-      // Must avoid double firing while new posts are already loading, as it
-      // would lead to loading twice as many posts.
-      _mutex.protect(() async {
-        if(lastVisibleItem.index > _posts.length - 2) {
-          await _loadNewPosts();
-        }
-      });
+      _loadIfSecondLast(lastVisibleItem.index);
     });
+  }
+
+  Future<bool> _loadIfSecondLast(int index, {bool snackBar = false}) async {
+    bool shouldUpdateState = false;
+
+    // Must avoid double firing while new posts are already loading, as it
+    // would lead to loading twice as many posts.
+    await _mutex.protect(() async {
+      if(index > _posts.length - 2) {
+        if(snackBar) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Loading new posts..."),
+            ),
+          );
+        }
+
+        await _loadNewPosts();
+        shouldUpdateState = true;
+      }
+    });
+
+    return shouldUpdateState;
   }
 
   Future<void> _loadNewPosts() async {
@@ -53,11 +70,14 @@ class _BooruState extends State<BooruContainer> {
     _page += 1;
   }
 
-  void _updatePosts(List<Post> posts) => setState(() => _posts = posts);
+  void _updatePosts(List<Post> posts) => setState(() {
+    _posts.clear();
+    _posts.addAll(posts);
+  });
 
   void _resetPosts() {
     _page = 1;
-    _posts = [];
+    _posts.clear();
   }
 
   @override
@@ -149,6 +169,7 @@ class _BooruState extends State<BooruContainer> {
     return PostContainer(
         posts: _posts,
         index: index,
+        onIndexUpdate: (index) => _loadIfSecondLast(index, snackBar: true),
         onExit: (index) => _controller.jumpTo(index: index),
     );
   }
