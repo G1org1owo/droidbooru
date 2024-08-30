@@ -3,8 +3,8 @@ import 'package:path/path.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
-import 'base/booru.dart';
-import 'base/booru_deserializer.dart';
+import '../model/base/booru.dart';
+import '../model/base/booru_deserializer.dart';
 
 class BooruContext {
   late Database _db;

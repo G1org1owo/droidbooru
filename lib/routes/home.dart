@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart' hide NavigationDrawer;
 
 import '../model/base/booru.dart';
-import '../model/booru_context.dart';
+import '../db/booru_context.dart';
 import '../ui/booru_list.dart';
 import '../ui/navigation_drawer.dart';
 import '../ui/search_bottom_sheet.dart';
