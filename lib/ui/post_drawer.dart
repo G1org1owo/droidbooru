@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../model/base/post.dart';
+import 'tag_tile.dart';
+import 'text_tile.dart';
 
 class PostDrawer extends StatelessWidget {
   final Post _post;
@@ -17,19 +19,19 @@ class PostDrawer extends StatelessWidget {
           const Divider(
             color: Colors.white,
           ),
-          ..._source(),
+          ..._buildSource(),
           const Divider(
             color: Colors.white,
           ),
-          ..._url(),
+          ..._buildUrl(),
           const Divider(
             color: Colors.white,
           ),
-          ..._other(),
+          ..._buildOther(),
           const Divider(
             color: Colors.white,
           ),
-          ..._tags(),
+          ..._buildTags(),
           const Divider(
             color: Colors.white,
           ),
@@ -38,7 +40,7 @@ class PostDrawer extends StatelessWidget {
     );
   }
 
-  List<Widget> _source() => [
+  List<Widget> _buildSource() => [
     const TextTile(
       "Source",
       enabled: false,
@@ -47,7 +49,7 @@ class PostDrawer extends StatelessWidget {
         _post.source
     ),
   ];
-  List<Widget> _url() => [
+  List<Widget> _buildUrl() => [
     const TextTile(
       "Url",
       enabled: false,
@@ -56,7 +58,7 @@ class PostDrawer extends StatelessWidget {
         _post.url,
     ),
   ];
-  List<Widget> _other() => [
+  List<Widget> _buildOther() => [
     const TextTile(
       "Other",
       enabled: false,
@@ -80,33 +82,11 @@ class PostDrawer extends StatelessWidget {
       "MD5: ${_post.md5}",
     ),
   ];
-  List<Widget> _tags() => [
+  List<Widget> _buildTags() => [
     const TextTile(
       "Tags",
       enabled: false,
     ),
-    ..._post.tags.map((tag) => TextTile(tag.name)),
+    ...(_post.tags..sort()).map((tag) => TagTile(tag)),
   ];
-}
-
-class TextTile extends StatelessWidget {
-  final String _text;
-  final bool _enabled;
-
-  const TextTile(this._text, {bool enabled=true, super.key}) :
-    _enabled = enabled;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(
-        _text,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
-        overflow: TextOverflow.ellipsis,
-      ),
-      enabled: _enabled,
-    );
-  }
 }
