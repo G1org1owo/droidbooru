@@ -7,14 +7,16 @@ import 'post_detail.dart';
 class PostContainer extends StatelessWidget {
   final List<Post> _posts;
   final int _index;
+  final BoxFit _fit;
   final void Function(int)? _onExit;
   final Future<bool> Function(int)? _onIndexUpdate;
 
   const PostContainer({required List<Post> posts, int index = 0,
-    void Function(int)? onExit, Future<bool> Function(int)? onIndexUpdate,
-    super.key}) :
+    BoxFit fit = BoxFit.fill, void Function(int)? onExit,
+    Future<bool> Function(int)? onIndexUpdate, super.key}) :
       _posts = posts,
       _index = index,
+      _fit = fit,
       _onExit = onExit,
       _onIndexUpdate = onIndexUpdate;
 
@@ -41,7 +43,7 @@ class PostContainer extends StatelessWidget {
           fadeOutDuration: const Duration(milliseconds: 100),
           placeholder: kTransparentImage,
           image: _post.previewUrl,
-          fit: BoxFit.fill,
+          fit: _fit,
         ),
       ),
     );
