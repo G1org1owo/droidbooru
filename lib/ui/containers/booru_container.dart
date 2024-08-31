@@ -4,9 +4,9 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../model/base/booru.dart';
 import '../../model/base/post.dart';
-import 'post_container.dart';
 import 'post_grid.dart';
 import '../components/weighted_icon.dart';
+import 'post_list.dart';
 
 class BooruContainer extends StatefulWidget {
   final Booru _booru;
@@ -24,7 +24,7 @@ class _BooruState extends State<BooruContainer> {
   int _page = 1;
 
   final ItemPositionsListener _listener = ItemPositionsListener.create();
-  final ItemScrollController _controller = ItemScrollController();
+
   final Mutex _mutex = Mutex();
 
   @override
@@ -115,13 +115,11 @@ class _BooruState extends State<BooruContainer> {
             // Post List
             SizedBox(
               height: 150,
-              child: ScrollablePositionedList.builder(
-                scrollDirection: Axis.horizontal,
-                itemScrollController: _controller,
+              child: PostList(
+                _posts,
                 itemPositionsListener: _listener,
-                itemCount: _posts.length,
-                itemBuilder: postBuilder,
-                shrinkWrap: true,
+                onIndexUpdate: (index) =>
+                    _loadIfSecondLast(index, snackBar: true),
               ),
             ),
 
@@ -170,15 +168,6 @@ class _BooruState extends State<BooruContainer> {
           ],
         ),
       )
-    );
-  }
-
-  Widget postBuilder(BuildContext context, int index) {
-    return PostContainer(
-        posts: _posts,
-        index: index,
-        onIndexUpdate: (index) => _loadIfSecondLast(index, snackBar: true),
-        onExit: (index) => _controller.jumpTo(index: index),
     );
   }
 }
