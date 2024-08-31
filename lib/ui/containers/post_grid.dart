@@ -1,7 +1,7 @@
-import 'package:droidbooru/ui/post_container.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../model/base/post.dart';
+import '../../model/base/post.dart';
+import 'post_container.dart';
 
 class PostGrid extends StatelessWidget {
   final List<Post> _posts;

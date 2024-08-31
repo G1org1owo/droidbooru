@@ -2,8 +2,8 @@ import 'package:flutter/material.dart' hide NavigationDrawer;
 
 import '../model/base/booru.dart';
 import '../model/booru_context.dart';
-import '../ui/navigation_drawer.dart';
-import '../ui/server_detail.dart';
+import '../ui/drawers/navigation_drawer.dart';
+import '../ui/details/server_detail.dart';
 
 class ServersPage extends StatefulWidget {
   const ServersPage({super.key});

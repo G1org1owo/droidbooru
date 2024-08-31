@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../model/base/booru.dart';
-import '../model/base/booru_deserializer.dart';
-import '../model/booru_context.dart';
+import '../../model/base/booru.dart';
+import '../../model/base/booru_deserializer.dart';
+import '../../model/booru_context.dart';
 
 class ServerDetail extends StatelessWidget {
   final Booru? _server;

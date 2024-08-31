@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:mutex/mutex.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-import '../model/base/booru.dart';
-import '../model/base/post.dart';
+import '../../model/base/booru.dart';
+import '../../model/base/post.dart';
 import 'post_container.dart';
 import 'post_grid.dart';
-import 'weighted_icon.dart';
+import '../components/weighted_icon.dart';
 
 class BooruContainer extends StatefulWidget {
   final Booru _booru;

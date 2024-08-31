@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart' hide PageScrollPhysics, NavigationDrawer;
 import 'package:preload_page_view/preload_page_view.dart';
 
-import '../model/base/post.dart';
-import 'navigation_drawer.dart';
-import 'post_drawer.dart';
-import 'post_interactive_image.dart';
+import '../../model/base/post.dart';
+import '../drawers/navigation_drawer.dart';
+import '../drawers/post_drawer.dart';
+import '../components/post_interactive_image.dart';
 
 class PostDetail extends StatefulWidget {
   final List<Post> _posts;

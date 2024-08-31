@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../model/base/post.dart';
-import 'post_detail.dart';
+import '../../model/base/post.dart';
+import '../details/post_detail.dart';
 
 class PostContainer extends StatelessWidget {
   final List<Post> _posts;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../model/base/post.dart';
-import 'tag_tile.dart';
-import 'text_tile.dart';
+import '../../model/base/post.dart';
+import '../components/tag_tile.dart';
+import '../components/text_tile.dart';
 
 class PostDrawer extends StatelessWidget {
   final Post _post;
