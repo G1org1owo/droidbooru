@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../model/base/booru.dart';
+import '../../model/base/booru.dart';
 import 'booru_container.dart';
 
 class BooruList extends StatefulWidget {
