@@ -2,10 +2,22 @@ import 'package:flutter/material.dart';
 
 class TextTile extends StatelessWidget {
   final String _text;
+  final String? _subtitle;
+  final double _textSize;
+  final double _subtitleSize;
   final bool _enabled;
   final Color? _color;
 
-  const TextTile(this._text, {bool enabled=true, Color? color, super.key}) :
+  const TextTile(this._text,
+      {String? subtitle,
+      double textSize = 14,
+      double subtitleSize = 14,
+      bool enabled = true,
+      Color? color,
+      super.key})
+      : _subtitle = subtitle,
+        _textSize = textSize,
+        _subtitleSize = subtitleSize,
         _enabled = enabled,
         _color = color;
 
@@ -14,8 +26,15 @@ class TextTile extends StatelessWidget {
     return ListTile(
       title: Text(
         _text,
-        style: const TextStyle(
-          fontSize: 14,
+        style: TextStyle(
+          fontSize: _textSize,
+        ),
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: _subtitle == null? null : Text(
+        _subtitle,
+        style: TextStyle(
+          fontSize: _subtitleSize,
         ),
         overflow: TextOverflow.ellipsis,
       ),

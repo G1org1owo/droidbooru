@@ -51,6 +51,7 @@ class _PostGridState extends State<PostGrid> with LoadablePostList {
       fit: BoxFit.cover,
       onIndexUpdate: (index) =>
           loadIfLast(index, snackBar: true, context: context),
+      onExit: (index) => _controller.jumpTo(_firstPositionFromIndex(index)),
     );
   }
 
@@ -79,6 +80,12 @@ class _PostGridState extends State<PostGrid> with LoadablePostList {
     }
 
     return lastVisiblePostIndex;
+  }
+
+  double _firstPositionFromIndex(int index) {
+    int row = (index / postsPerRow).floor();
+
+    return row * (postExtent + _mainAxisSpacing);
   }
 
   @override

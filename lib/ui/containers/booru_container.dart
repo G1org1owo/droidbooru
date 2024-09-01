@@ -106,6 +106,7 @@ class _BooruState extends State<BooruContainer> {
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => BooruDetail(
+                            widget._booru,
                             _posts,
                             tags: widget._tags,
                             loadNewPosts: _loadNewPosts,
