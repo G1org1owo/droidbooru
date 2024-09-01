@@ -4,9 +4,11 @@ import 'package:mutex/mutex.dart';
 import '../../model/base/post.dart';
 
 mixin LoadablePostList {
-  Mutex get mutex;
+  final Mutex _mutex = Mutex();
   List<Post> get posts;
   Future<void> loadNewPosts();
+
+  bool _loading = false;
 
   Future<bool> loadIfLast(int index,
       {bool snackBar = false, BuildContext? context}) async {
@@ -14,20 +16,32 @@ mixin LoadablePostList {
 
     // Must avoid double firing while new posts are already loading, as it
     // would lead to loading twice as many posts.
-    await mutex.protect(() async {
-      if (index > posts.length - 2) {
-        if (snackBar && context != null) {
+    if(_loading) return false;
+
+    if (index > posts.length - 2) {
+      _loading = true;
+
+      if (snackBar && context != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Loading new posts..."),
+          ),
+        );
+      }
+
+      await loadNewPosts().onError((error, _) {
+        log(error.toString());
+        if(context != null && context.mounted){
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Loading new posts..."),
+              content: Text("Could not load posts!"),
             ),
           );
         }
-
-        await loadNewPosts();
-        shouldUpdateState = true;
-      }
-    });
+      });
+      shouldUpdateState = true;
+      _loading = false;
+    }
 
     return shouldUpdateState;
   }

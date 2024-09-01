@@ -9,7 +9,6 @@ import 'post_container.dart';
 class PostList extends StatelessWidget with LoadablePostList {
   final List<Post> _posts;
   final Future<void> Function() _loadNewPosts;
-  final Mutex _mutex = Mutex();
 
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
@@ -51,9 +50,6 @@ class PostList extends StatelessWidget with LoadablePostList {
 
     loadIfLast(lastVisibleItem.index);
   }
-
-  @override
-  Mutex get mutex => _mutex;
 
   @override
   List<Post> get posts => _posts;

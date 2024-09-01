@@ -9,8 +9,6 @@ class PostGrid extends StatelessWidget with LoadablePostList {
   final List<Post> _posts;
   final Future<void> Function() _loadNewPosts;
 
-  final Mutex _mutex = Mutex();
-
   PostGrid(this._posts,
       {required Future<void> Function() loadNewPosts, super.key})
       : _loadNewPosts = loadNewPosts;
@@ -36,9 +34,6 @@ class PostGrid extends StatelessWidget with LoadablePostList {
           loadIfLast(index, snackBar: true, context: context),
     );
   }
-
-  @override
-  Mutex get mutex => _mutex;
 
   @override
   List<Post> get posts => _posts;
