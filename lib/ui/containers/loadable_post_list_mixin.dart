@@ -30,7 +30,6 @@ mixin LoadablePostList {
       }
 
       await loadNewPosts().onError((error, _) {
-        log(error.toString());
         if(context != null && context.mounted){
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(

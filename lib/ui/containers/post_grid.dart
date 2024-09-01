@@ -1,25 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:mutex/mutex.dart';
 
 import '../../model/base/post.dart';
 import 'loadable_post_list_mixin.dart';
 import 'post_container.dart';
 
-class PostGrid extends StatelessWidget with LoadablePostList {
+class PostGrid extends StatefulWidget {
   final List<Post> _posts;
   final Future<void> Function() _loadNewPosts;
 
-  PostGrid(this._posts,
+  const PostGrid(this._posts,
       {required Future<void> Function() loadNewPosts, super.key})
       : _loadNewPosts = loadNewPosts;
 
   @override
+  State<StatefulWidget> createState() => _PostGridState();
+}
+
+class _PostGridState extends State<PostGrid> with LoadablePostList {
+  late final ScrollController _controller;
+
+  static const double _maxCrossAxisExtent = 150.0;
+  static const double _mainAxisSpacing = 5;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = ScrollController(
+      onAttach: _onScrollAttach,
+      onDetach: _onScrollDetach,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      itemCount: _posts.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: 5,
+      itemCount: posts.length,
+      controller: _controller,
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: _maxCrossAxisExtent,
+        mainAxisSpacing: _mainAxisSpacing,
       ),
       itemBuilder: _postBuilder,
     );
@@ -27,7 +46,7 @@ class PostGrid extends StatelessWidget with LoadablePostList {
 
   Widget _postBuilder(BuildContext context, int index) {
     return PostContainer(
-      posts: _posts,
+      posts: posts,
       index: index,
       fit: BoxFit.cover,
       onIndexUpdate: (index) =>
@@ -35,9 +54,43 @@ class PostGrid extends StatelessWidget with LoadablePostList {
     );
   }
 
-  @override
-  List<Post> get posts => _posts;
+  void _onScrollAttach(ScrollPosition position) {
+    position.addListener(_onPositionUpdate);
+  }
+  void _onScrollDetach(ScrollPosition position) {
+    position.removeListener(_onPositionUpdate);
+  }
+
+  void _onPositionUpdate() async {
+    final position = _controller.position;
+
+    int lastVisiblePostIndex = _lastPostIndexFromPosition(position);
+
+    await loadIfLast(lastVisiblePostIndex, snackBar: true, context: context);
+  }
+
+  int _lastPostIndexFromPosition(ScrollPosition position) {
+    int lastVisibleRow = ((position.extentBefore + position.extentInside) /
+        (postExtent + _mainAxisSpacing)).ceil();
+
+    int lastVisiblePostIndex = lastVisibleRow * postsPerRow - 1;
+    if(lastVisiblePostIndex > posts.length - 1) {
+      lastVisiblePostIndex = posts.length - 1;
+    }
+
+    return lastVisiblePostIndex;
+  }
 
   @override
-  Future<void> loadNewPosts() => _loadNewPosts();
+  List<Post> get posts => widget._posts;
+
+  @override
+  Future<void> loadNewPosts() => widget._loadNewPosts().then((_) {
+    setState(() { });
+  });
+
+  int get postsPerRow =>
+      (MediaQuery.sizeOf(context).width / _maxCrossAxisExtent).ceil();
+
+  double get postExtent => MediaQuery.sizeOf(context).width / postsPerRow;
 }

@@ -32,7 +32,7 @@ class _BooruDetailState extends State<BooruDetail> {
       ),
       body: PostGrid(
         widget._posts,
-        loadNewPosts: () => widget._loadNewPosts().then((_) => setState(() {})),
+        loadNewPosts: () => widget._loadNewPosts(),
       ),
     );
   }

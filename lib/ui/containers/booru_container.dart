@@ -130,7 +130,7 @@ class _BooruState extends State<BooruContainer> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       )
