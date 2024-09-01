@@ -25,16 +25,17 @@ class PostContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        int newIndex = await Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => PostDetail(
             posts: _posts,
             index: _index,
-            onExit: _onExit,
             onIndexUpdate: _onIndexUpdate,
           )),
         );
+
+        if(_onExit != null) _onExit(newIndex);
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),

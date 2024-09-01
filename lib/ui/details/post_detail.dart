@@ -9,15 +9,13 @@ import '../components/post_interactive_image.dart';
 class PostDetail extends StatefulWidget {
   final List<Post> _posts;
   final int _initialIndex;
-  final void Function(int)? _onExit;
   final Future<bool> Function(int)? _onIndexUpdate;
 
   const PostDetail({required List<Post> posts, int index = 0,
-    void Function(int)? onExit, Future<bool> Function(int)? onIndexUpdate,
+    Future<bool> Function(int)? onIndexUpdate,
     super.key}) :
       _posts = posts,
       _initialIndex = index,
-      _onExit = onExit,
       _onIndexUpdate = onIndexUpdate;
 
   @override
@@ -62,9 +60,8 @@ class _PostDetailState extends State<PostDetail> {
       onPopInvokedWithResult: (bool didPop, Object? result) {
         if(didPop) return;
 
-        // Update outer context based on new scroll index
-        if(widget._onExit != null) widget._onExit!(_currentIndex);
-        Navigator.pop(context);
+        // Return new scroll index to update outer context
+        Navigator.pop(context, _currentIndex);
       },
       child: Scaffold(
         key: _scaffoldKey,
