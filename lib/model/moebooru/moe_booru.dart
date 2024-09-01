@@ -143,4 +143,10 @@ class Moebooru extends Booru {
   String toString() {
     return 'Moebooru{id: $id, _url: $_url}';
   }
+
+  @override
+  Post deserializePost(Map<String, dynamic> map) {
+    map['file_url'] = map['content_url'];
+    return MoebooruPost.fromMap(map, this);
+  }
 }

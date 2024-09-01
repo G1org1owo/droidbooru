@@ -40,6 +40,7 @@ abstract class Post {
   int get id;
   set id(int value);
 
+  List<String> get stringTags;
   List<Tag> get tags;
   set tags(List<Tag> value);
 
@@ -50,4 +51,26 @@ abstract class Post {
   set hasChildren(bool value);
 
   String get url;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'url': booru.url.origin,
+      'type': booru.type,
+      'id': id,
+      'author': author,
+      'source': source,
+      'score':score ,
+      'md5': md5,
+      'file_ext': fileExtension,
+      'content_url': contentUrl,
+      'preview_url': previewUrl,
+      'sample_url': sampleUrl,
+      'width': width,
+      'height': height,
+      'parent_id': parentId,
+      'rating': rating,
+      'has_children': hasChildren,
+      'tags': stringTags.join(' '),
+    };
+  }
 }

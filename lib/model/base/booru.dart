@@ -10,6 +10,8 @@ abstract class Booru {
   Future<List<Post>> listPosts(int limit, int page, List<String> tags);
   Future<Tag> getTag(String name);
 
+  Post deserializePost(Map<String, dynamic> map);
+
   Map<String, dynamic> toMap() {
     return {
       'url': url.origin,
