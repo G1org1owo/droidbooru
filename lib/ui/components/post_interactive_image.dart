@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
-import '../model/base/post.dart';
+import '../../model/base/post.dart';
 
 class PostInteractiveImage extends StatefulWidget {
   final Post _post;

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mutex/mutex.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-import '../model/base/booru.dart';
-import '../model/base/post.dart';
-import 'post_container.dart';
-import 'weighted_icon.dart';
+import '../../model/base/booru.dart';
+import '../../model/base/post.dart';
+import '../components/weighted_icon.dart';
+import '../details/booru_detail.dart';
+import 'post_list.dart';
 
 class BooruContainer extends StatefulWidget {
   final Booru _booru;
@@ -19,45 +19,35 @@ class BooruContainer extends StatefulWidget {
 }
 
 class _BooruState extends State<BooruContainer> {
-  List<Post> _posts = [];
+  final List<Post> _posts = [];
   int _page = 1;
 
-  final ItemPositionsListener _listener = ItemPositionsListener.create();
-  final ItemScrollController _controller = ItemScrollController();
   final Mutex _mutex = Mutex();
 
   @override
   void initState() {
     super.initState();
     _loadNewPosts();
-
-    _listener.itemPositions.addListener(() async {
-      final positions = _listener.itemPositions.value;
-      final lastVisibleItem = positions.reduce((last, position) =>
-        last.index > position.index? last : position
-      );
-
-      // Must avoid double firing while new posts are already loading, as it
-      // would lead to loading twice as many posts.
-      _mutex.protect(() async {
-        if(lastVisibleItem.index > _posts.length - 2) {
-          await _loadNewPosts();
-        }
-      });
-    });
   }
 
   Future<void> _loadNewPosts() async {
-    List<Post> newPosts = await widget._booru.listPosts(100, _page, widget._tags);
-    _updatePosts(_posts + newPosts);
-    _page += 1;
+    // Avoid downloading posts twice
+    await _mutex.protect(() async {
+      List<Post> newPosts =
+          await widget._booru.listPosts(100, _page, widget._tags);
+      _updatePosts(_posts + newPosts);
+      _page += 1;
+    });
   }
 
-  void _updatePosts(List<Post> posts) => setState(() => _posts = posts);
+  void _updatePosts(List<Post> posts) => setState(() {
+    _posts.clear();
+    _posts.addAll(posts);
+  });
 
   void _resetPosts() {
     _page = 1;
-    _posts = [];
+    _posts.clear();
   }
 
   @override
@@ -94,13 +84,9 @@ class _BooruState extends State<BooruContainer> {
             // Post List
             SizedBox(
               height: 150,
-              child: ScrollablePositionedList.builder(
-                scrollDirection: Axis.horizontal,
-                itemScrollController: _controller,
-                itemPositionsListener: _listener,
-                itemCount: _posts.length,
-                itemBuilder: postBuilder,
-                shrinkWrap: true,
+              child: PostList(
+                _posts,
+                loadNewPosts: _loadNewPosts,
               ),
             ),
 
@@ -118,7 +104,14 @@ class _BooruState extends State<BooruContainer> {
                   const Spacer(),
                   IconButton(
                     onPressed: () {
-                      // TODO: implement search grid view
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => BooruDetail(
+                            widget._booru,
+                            _posts,
+                            tags: widget._tags,
+                            loadNewPosts: _loadNewPosts,
+                          )
+                      ));
                     },
                     icon: WeightedIcon(
                       Icons.search_rounded,
@@ -138,18 +131,10 @@ class _BooruState extends State<BooruContainer> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       )
-    );
-  }
-
-  Widget postBuilder(BuildContext context, int index) {
-    return PostContainer(
-        posts: _posts,
-        index: index,
-        onExit: (index) => _controller.jumpTo(index: index),
     );
   }
 }

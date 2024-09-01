@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../model/base/tag.dart';
-import '../model/base/tag_type.dart';
+import '../../model/base/tag.dart';
+import '../../model/base/tag_type.dart';
 import 'text_tile.dart';
 
 class TagTile extends StatelessWidget {

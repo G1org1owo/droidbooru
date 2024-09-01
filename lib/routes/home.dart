@@ -2,10 +2,10 @@ import 'package:flutter/material.dart' hide NavigationDrawer;
 
 import '../model/base/booru.dart';
 import '../db/booru_context.dart';
-import '../ui/booru_list.dart';
-import '../ui/navigation_drawer.dart';
-import '../ui/search_bottom_sheet.dart';
-import '../ui/weighted_icon.dart';
+import '../ui/containers/booru_list.dart';
+import '../ui/drawers/navigation_drawer.dart';
+import '../ui/drawers/search_bottom_sheet.dart';
+import '../ui/components/weighted_icon.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
