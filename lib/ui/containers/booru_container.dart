@@ -3,8 +3,8 @@ import 'package:mutex/mutex.dart';
 
 import '../../model/base/booru.dart';
 import '../../model/base/post.dart';
-import 'post_grid.dart';
 import '../components/weighted_icon.dart';
+import '../details/booru_detail.dart';
 import 'post_list.dart';
 
 class BooruContainer extends StatefulWidget {
@@ -104,10 +104,10 @@ class _BooruState extends State<BooruContainer> {
                   const Spacer(),
                   IconButton(
                     onPressed: () {
-                      // TODO: implement search grid view
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => PostGrid(
+                          builder: (context) => BooruDetail(
                             _posts,
+                            tags: widget._tags,
                             loadNewPosts: _loadNewPosts,
                           )
                       ));
