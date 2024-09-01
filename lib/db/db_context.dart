@@ -12,7 +12,7 @@ class DBContext {
   Future<void> _initSembast() async {
     final dir = await getApplicationDocumentsDirectory();
     await dir.create(recursive: true);
-    final dbPath = join(dir.path, 'boorus.db');
+    final dbPath = join(dir.path, 'droidbooru.db');
     _db = await databaseFactoryIo.openDatabase(dbPath);
     _init = null;
   }
