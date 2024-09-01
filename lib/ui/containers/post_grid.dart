@@ -1,15 +1,19 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:mutex/mutex.dart';
 
 import '../../model/base/post.dart';
+import 'loadable_post_list_mixin.dart';
 import 'post_container.dart';
 
-class PostGrid extends StatelessWidget {
+class PostGrid extends StatelessWidget with LoadablePostList {
   final List<Post> _posts;
-  final Future<bool> Function(int)? _onIndexUpdate;
+  final Future<void> Function() _loadNewPosts;
 
-  const PostGrid(this._posts, {Future<bool> Function(int)? onIndexUpdate,
-    super.key}) :
-      _onIndexUpdate = onIndexUpdate;
+  final Mutex _mutex = Mutex();
+
+  PostGrid(this._posts,
+      {required Future<void> Function() loadNewPosts, super.key})
+      : _loadNewPosts = loadNewPosts;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +32,17 @@ class PostGrid extends StatelessWidget {
       posts: _posts,
       index: index,
       fit: BoxFit.cover,
-      onIndexUpdate: _onIndexUpdate,
+      onIndexUpdate: (index) =>
+          loadIfLast(index, snackBar: true, context: context),
     );
   }
+
+  @override
+  Mutex get mutex => _mutex;
+
+  @override
+  List<Post> get posts => _posts;
+
+  @override
+  Future<void> loadNewPosts() => _loadNewPosts();
 }

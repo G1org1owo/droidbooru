@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mutex/mutex.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../model/base/booru.dart';
 import '../../model/base/post.dart';
@@ -23,52 +22,22 @@ class _BooruState extends State<BooruContainer> {
   final List<Post> _posts = [];
   int _page = 1;
 
-  final ItemPositionsListener _listener = ItemPositionsListener.create();
-
   final Mutex _mutex = Mutex();
 
   @override
   void initState() {
     super.initState();
     _loadNewPosts();
-
-    _listener.itemPositions.addListener(() async {
-      final positions = _listener.itemPositions.value;
-      final lastVisibleItem = positions.reduce((last, position) =>
-        last.index > position.index? last : position
-      );
-
-      _loadIfSecondLast(lastVisibleItem.index);
-    });
-  }
-
-  Future<bool> _loadIfSecondLast(int index, {bool snackBar = false}) async {
-    bool shouldUpdateState = false;
-
-    // Must avoid double firing while new posts are already loading, as it
-    // would lead to loading twice as many posts.
-    await _mutex.protect(() async {
-      if(index > _posts.length - 2) {
-        if(snackBar) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Loading new posts..."),
-            ),
-          );
-        }
-
-        await _loadNewPosts();
-        shouldUpdateState = true;
-      }
-    });
-
-    return shouldUpdateState;
   }
 
   Future<void> _loadNewPosts() async {
-    List<Post> newPosts = await widget._booru.listPosts(100, _page, widget._tags);
-    _updatePosts(_posts + newPosts);
-    _page += 1;
+    // Avoid downloading posts twice
+    await _mutex.protect(() async {
+      List<Post> newPosts =
+          await widget._booru.listPosts(100, _page, widget._tags);
+      _updatePosts(_posts + newPosts);
+      _page += 1;
+    });
   }
 
   void _updatePosts(List<Post> posts) => setState(() {
@@ -117,9 +86,7 @@ class _BooruState extends State<BooruContainer> {
               height: 150,
               child: PostList(
                 _posts,
-                itemPositionsListener: _listener,
-                onIndexUpdate: (index) =>
-                    _loadIfSecondLast(index, snackBar: true),
+                loadNewPosts: _loadNewPosts,
               ),
             ),
 
@@ -141,8 +108,7 @@ class _BooruState extends State<BooruContainer> {
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => PostGrid(
                             _posts,
-                            onIndexUpdate: (index) =>
-                              _loadIfSecondLast(index, snackBar: true),
+                            loadNewPosts: _loadNewPosts,
                           )
                       ));
                     },
