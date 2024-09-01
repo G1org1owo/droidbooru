@@ -88,7 +88,7 @@ class ServerDetail extends StatelessWidget {
       String key = _booruTypeController.text;
       String url = _urlController.text;
 
-      if((_server == null || _server.url.origin != url) && (await BooruContext.getContext().find(url)) != null &&
+      if((_server == null || _server.url.origin != url) && (await BooruContext().find(url)) != null &&
           context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -99,7 +99,7 @@ class ServerDetail extends StatelessWidget {
       }
 
       Booru newServer = BooruDeserializer.deserialize(key, url, id: _server?.id)!;
-      newServer = await BooruContext.getContext().put(newServer);
+      newServer = await BooruContext().put(newServer);
       if(context.mounted) {
         Navigator.pop(context, newServer);
       }
