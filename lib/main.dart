@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'model/base/booru_deserializer.dart';
 import 'model/moebooru/moe_booru.dart';
+import 'routes/favorites.dart';
 import 'routes/home.dart';
 import 'routes/servers.dart';
 
@@ -31,6 +32,7 @@ class App extends StatelessWidget {
       routes: {
         'home': (context) => const HomePage(title: 'Droidbooru'),
         'servers': (context) => const ServersPage(),
+        'favorites': (context) => const FavoritesPage(),
       },
     );
   }
