@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart' hide NavigationDrawer;
 
 import '../model/base/booru.dart';
-import '../model/booru_context.dart';
+import '../db/booru_context.dart';
 import '../ui/drawers/navigation_drawer.dart';
 import '../ui/details/server_detail.dart';
 
@@ -14,7 +14,7 @@ class ServersPage extends StatefulWidget {
 
 class _ServersPageState extends State<ServersPage> {
   final List<Booru> _servers = [];
-  final BooruContext _ctx = BooruContext.getContext();
+  final BooruContext _ctx = BooruContext();
 
   void loadServers() async {
     List<Booru> boorus = await _ctx.readAll();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart' hide NavigationDrawer;
 
 import '../model/base/booru.dart';
-import '../model/booru_context.dart';
+import '../db/booru_context.dart';
 import '../ui/containers/booru_list.dart';
 import '../ui/drawers/navigation_drawer.dart';
 import '../ui/drawers/search_bottom_sheet.dart';
@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<String> _tags = [];
   final List<Booru> _boorus = [];
-  final BooruContext _ctx = BooruContext.getContext();
+  final BooruContext _ctx = BooruContext();
 
   void loadBoorus() async {
     List<Booru> boorus = await _ctx.readAll();

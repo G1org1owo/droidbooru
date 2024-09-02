@@ -20,6 +20,12 @@ class NavigationDrawer extends StatelessWidget {
               _navigate(context, 'servers');
             },
           ),
+          ListTile(
+            title: const Text("Favorites"),
+            onTap: () {
+              _navigate(context, 'favorites');
+            },
+          ),
         ],
       ),
     );

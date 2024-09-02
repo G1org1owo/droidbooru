@@ -6,7 +6,7 @@ import '../base/tag.dart';
 import '../base/post.dart';
 import 'moe_booru.dart';
 
-class MoebooruPost implements Post {
+class MoebooruPost extends Post {
   final Moebooru _booru;
   int _id;
   String _author;
@@ -23,12 +23,14 @@ class MoebooruPost implements Post {
   String _rating;
   bool _hasChildren;
 
+  List<String> _fakeTags;
+
   List<Tag> _tags;
 
   MoebooruPost._(this._id, this._author, this._source, this._score, this._md5,
       this._fileExtension, this._contentUrl, this._previewUrl,
       this._sampleUrl, this._width, this._height, this._parentId, this._rating,
-      this._hasChildren, this._tags, this._booru);
+      this._hasChildren, this._fakeTags, this._tags, this._booru);
 
   factory MoebooruPost.fromJson(String json, Moebooru booru) {
     final jsonData = jsonDecode(json);
@@ -52,15 +54,20 @@ class MoebooruPost implements Post {
       map['parent_id'],
       map['rating'],
       map['has_children'],
+      map['tags'].split(' '),
       [],
       booru,
     );
 
-    Isolate.run(() => booru.getTags(map['id'])).then(
-            (tags) => post._tags = tags
-    );
+    post.pullTags();
 
     return post;
+  }
+
+  Future<void> pullTags() async {
+    await Isolate.run(() => _booru.getTags(_id)).then(
+            (tags) => _tags = tags
+    );
   }
 
   @override
@@ -167,6 +174,9 @@ class MoebooruPost implements Post {
   set id(int value) {
     _id = value;
   }
+
+  @override
+  List<String> get stringTags => _fakeTags;
 
   @override
   List<Tag> get tags => _tags;

@@ -6,10 +6,10 @@ import 'post_container.dart';
 
 class PostGrid extends StatefulWidget {
   final List<Post> _posts;
-  final Future<void> Function() _loadNewPosts;
+  final Future<void> Function()? _loadNewPosts;
 
   const PostGrid(this._posts,
-      {required Future<void> Function() loadNewPosts, super.key})
+      {Future<void> Function()? loadNewPosts, super.key})
       : _loadNewPosts = loadNewPosts;
 
   @override
@@ -49,8 +49,11 @@ class _PostGridState extends State<PostGrid> with LoadablePostList {
       posts: posts,
       index: index,
       fit: BoxFit.cover,
-      onIndexUpdate: (index) =>
-          loadIfLast(index, snackBar: true, context: context),
+      onIndexUpdate: (index) => loadIfLast(
+        index,
+        snackBar: widget._loadNewPosts != null,
+        context: context
+      ),
       onExit: (index) => _controller.jumpTo(_firstPositionFromIndex(index)),
     );
   }
@@ -67,7 +70,11 @@ class _PostGridState extends State<PostGrid> with LoadablePostList {
 
     int lastVisiblePostIndex = _lastPostIndexFromPosition(position);
 
-    await loadIfLast(lastVisiblePostIndex, snackBar: true, context: context);
+    await loadIfLast(
+        lastVisiblePostIndex,
+        snackBar: widget._loadNewPosts != null,
+        context: context
+    );
   }
 
   int _lastPostIndexFromPosition(ScrollPosition position) {
@@ -92,9 +99,10 @@ class _PostGridState extends State<PostGrid> with LoadablePostList {
   List<Post> get posts => widget._posts;
 
   @override
-  Future<void> loadNewPosts() => widget._loadNewPosts().then((_) {
-    setState(() { });
-  });
+  Future<void> loadNewPosts() => widget._loadNewPosts == null? Future.value(null) :
+    widget._loadNewPosts!().then((_) {
+      setState(() { });
+    });
 
   int get postsPerRow =>
       (MediaQuery.sizeOf(context).width / _maxCrossAxisExtent).ceil();

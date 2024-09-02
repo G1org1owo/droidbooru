@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart' hide PageScrollPhysics, NavigationDrawer;
 import 'package:preload_page_view/preload_page_view.dart';
 
+import '../../db/favorites_context.dart';
 import '../../model/base/post.dart';
 import '../drawers/navigation_drawer.dart';
 import '../drawers/post_drawer.dart';
@@ -28,8 +29,10 @@ class _PostDetailState extends State<PostDetail> {
 
   late int _currentIndex;
   bool _scrollLocked = false;
+  bool _isFavorite = false;
 
   late PreloadPageController _controller;
+  final FavoritesContext _favoritesContext = FavoritesContext();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -37,21 +40,26 @@ class _PostDetailState extends State<PostDetail> {
     super.initState();
 
     _currentIndex = widget._initialIndex;
+    _favoritesContext.isFavorite(_currentPost)
+        .then((fav) => _isFavorite = fav);
     _controller = PreloadPageController(initialPage: _currentIndex);
   }
 
-  void updateIndex(int index) {
+  void updateIndex(int index) async {
     if(widget._onIndexUpdate != null) {
       widget._onIndexUpdate!(index).then(
         (shouldUpdateState) => shouldUpdateState? setState(() {}) : null
       );
     }
-    setState(() {
-      _currentIndex = index;
-    });
+
+    _currentIndex = index;
+    _isFavorite = await _favoritesContext.isFavorite(_currentPost);
+
+    setState(() { });
   }
 
   List<Post> get _posts => widget._posts;
+  Post get _currentPost => _posts[_currentIndex];
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +82,10 @@ class _PostDetailState extends State<PostDetail> {
           backgroundColor: Colors.transparent,
           actions: [
             IconButton(
-              onPressed: (){ },
-              icon: const Icon(Icons.favorite_border),
+              onPressed: _toggleFavorite,
+              icon: _isFavorite ?
+                  const Icon(Icons.favorite_rounded, color: Colors.pinkAccent) :
+                  const Icon(Icons.favorite_border_rounded),
             ),
             IconButton(
               onPressed: (){ },
@@ -94,7 +104,7 @@ class _PostDetailState extends State<PostDetail> {
           ],
         ),
         drawer: const NavigationDrawer(),
-        endDrawer: PostDrawer(_posts[_currentIndex]),
+        endDrawer: PostDrawer(_currentPost),
         body: PreloadPageView.builder(
           physics: _scrollLocked ?
           const NeverScrollableScrollPhysics() :
@@ -120,6 +130,16 @@ class _PostDetailState extends State<PostDetail> {
       ),
     );
   }
+
+  void _toggleFavorite() async {
+              _isFavorite?
+                _favoritesContext.remove(_currentPost) :
+                _favoritesContext.add(_currentPost);
+
+              setState(() {
+                _isFavorite = !_isFavorite;
+              });
+            }
 
   void _setScrollLock(double scale) {
     bool scrollLocked = scale > 1.0;
