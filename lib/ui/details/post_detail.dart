@@ -84,7 +84,7 @@ class _PostDetailState extends State<PostDetail> {
             IconButton(
               onPressed: _toggleFavorite,
               icon: _isFavorite ?
-                  const Icon(Icons.favorite_rounded) :
+                  const Icon(Icons.favorite_rounded, color: Colors.pinkAccent) :
                   const Icon(Icons.favorite_border_rounded),
             ),
             IconButton(
