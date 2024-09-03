@@ -9,11 +9,18 @@ class FavoritesContext extends DBContext {
   final StoreRef _favoriteStore = intMapStoreFactory.store('favorites');
 
   static FavoritesContext? _instance;
+  static FavoritesContext? _memoryInstance;
 
   FavoritesContext._();
   factory FavoritesContext() {
     _instance ??= FavoritesContext._();
     return _instance!;
+  }
+
+  factory FavoritesContext.memory() {
+    _memoryInstance ??= FavoritesContext._();
+    _memoryInstance!.memory = true;
+    return _memoryInstance!;
   }
 
   Future<List<Post>> readAll() async {
