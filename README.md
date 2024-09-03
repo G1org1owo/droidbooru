@@ -1,4 +1,4 @@
-![build](https://github.com/G1org1owo/droidbooru/actions/workflows/flutter.yml/badge.svg)
+[![build](https://github.com/G1org1owo/droidbooru/actions/workflows/flutter.yml/badge.svg)](https://github.com/G1org1owo/droidbooru/actions/workflows/flutter.yml)
 
 # droidbooru
 
