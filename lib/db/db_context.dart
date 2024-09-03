@@ -6,22 +6,18 @@ import 'package:sembast/sembast_io.dart';
 
 // Consider using generics
 class DBContext {
-  static late Database _db;
-  static Future<void>? _init;
+  static Database? _db;
 
   Future<void> _initSembast() async {
     final dir = await getApplicationDocumentsDirectory();
     await dir.create(recursive: true);
     final dbPath = join(dir.path, 'droidbooru.db');
     _db = await databaseFactoryIo.openDatabase(dbPath);
-    _init = null;
   }
 
   @protected
   Future<Database> get db async {
-    _init ??= _initSembast();
-    await _init;
-
-    return _db;
+    _db ?? await _initSembast();
+    return _db!;
   }
 }
