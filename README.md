@@ -1,3 +1,5 @@
+![build](https://github.com/G1org1owo/droidbooru/actions/workflows/flutter.yml/badge.svg)
+
 # droidbooru
 
 An open source mobile browser for most image boards, realized in Flutter
