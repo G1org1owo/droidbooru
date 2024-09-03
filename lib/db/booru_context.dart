@@ -8,11 +8,18 @@ class BooruContext extends DBContext {
   final StoreRef _booruStore = intMapStoreFactory.store('boorus');
 
   static BooruContext? _instance;
+  static BooruContext? _memoryInstance;
 
   BooruContext._();
   factory BooruContext() {
     _instance ??= BooruContext._();
     return _instance!;
+  }
+
+  factory BooruContext.memory() {
+    _memoryInstance ??= BooruContext._();
+    _memoryInstance!.memory = true;
+    return _memoryInstance!;
   }
 
   Future<List<Booru>> readAll() async {
@@ -24,6 +31,16 @@ class BooruContext extends DBContext {
           id: record.key as int,
       )!
     ).toList();
+  }
+
+  Future<Booru?> read(int id) async {
+    final record = await _booruStore.record(id).get(await db) as Map<String, Object?>?;
+
+    return record == null? null : BooruDeserializer.deserialize(
+      record['type'] as String,
+      record['url'] as String,
+      id: id,
+    )!;
   }
 
   Future<Booru?> find(String url) async {
